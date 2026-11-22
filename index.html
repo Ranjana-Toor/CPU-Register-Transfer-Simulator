@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An interactive 8-bit CPU register transfer and microoperation simulator for learning computer architecture.">
+  <title>CPU Register Transfer Simulator</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home"><span class="brand-mark">CPU</span><span>Register Transfer Simulator</span></a>
+    <nav aria-label="Main navigation">
+      <a href="#registers">Registers</a><a href="#operations">Operations</a><a href="#architecture">Architecture</a><a href="#history">History</a><a href="#help">Help</a>
+    </nav>
+    <div class="status"><span class="status-dot"></span><span id="statusText">Simulator ready</span></div>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div>
+        <p class="eyebrow">INTERACTIVE COMPUTER ARCHITECTURE LAB</p>
+        <h1>CPU Register Transfer<br><span>& Microoperation Simulator</span></h1>
+        <p class="hero-copy">Explore how an 8-bit CPU stores data, transfers values between registers, and performs arithmetic and logical operations.</p>
+        <div class="hero-actions"><a class="btn primary" href="#registers">Open register bank</a><button class="btn secondary" id="resetBtn">↻ Initialize / Reset CPU</button></div>
+      </div>
+      <aside class="hero-card"><div class="hero-card-top"><span>CPU STATUS</span><span class="live-pill">● READY</span></div><div class="hero-number">8<span>-bit</span></div><p>4 general-purpose registers</p><div class="mini-stats"><div><strong>4</strong><small>Registers</small></div><div><strong>256</strong><small>Values (0–255)</small></div><div><strong id="operationCount">0</strong><small>Operations</small></div></div></aside>
+    </section>
+
+    <section id="registers" class="section">
+      <div class="section-heading"><div><p class="eyebrow">MEMORY UNITS</p><h2>Register Bank</h2><p class="muted">Each register stores one unsigned 8-bit value.</p></div><button class="btn secondary small" id="clearAllBtn">Clear all registers</button></div>
+      <div class="register-grid" id="registerGrid"></div>
+    </section>
+
+    <section id="operations" class="section">
+      <div class="section-heading"><div><p class="eyebrow">MICROOPERATIONS</p><h2>Operate on registers</h2><p class="muted">Choose an operation, set its inputs, and execute it.</p></div></div>
+      <div class="operation-layout">
+        <div class="operation-tabs" role="tablist" aria-label="Operation types">
+          <button class="op-tab active" data-panel="loadPanel">Load</button>
+          <button class="op-tab" data-panel="transferPanel">Transfer</button>
+          <button class="op-tab" data-panel="arithmeticPanel">Arithmetic</button>
+          <button class="op-tab" data-panel="logicalPanel">Logical</button>
+        </div>
+        <div class="panel-wrap">
+          <section class="operation-panel active" id="loadPanel">
+            <h3>Load a value</h3><p class="muted">Place a decimal value (0–255) into a selected register.</p>
+            <div class="form-grid"><label>Destination register<select id="loadRegister"></select></label><label>Decimal value<input id="loadValue" type="number" min="0" max="255" step="1" placeholder="e.g. 25"></label></div>
+            <button class="btn primary" id="loadBtn">Load value</button><p class="hint">RTL example: <code>R1 ← 25</code></p>
+          </section>
+          <section class="operation-panel" id="transferPanel">
+            <h3>Register transfer</h3><p class="muted">Copy the value from one register to another.</p>
+            <div class="form-grid three"><label>Source register<select id="transferSource"></select></label><label>Destination register<select id="transferDestination"></select></label><div class="field-note">Source remains unchanged.</div></div>
+            <button class="btn primary" id="transferBtn">Transfer value</button><p class="hint">RTL example: <code>R1 ← R2</code></p>
+          </section>
+          <section class="operation-panel" id="arithmeticPanel">
+            <h3>Arithmetic operations</h3><p class="muted">Results are stored in the destination register using 8-bit wraparound.</p>
+            <div class="form-grid three"><label>Operation<select id="arithmeticType"><option value="add">Addition (A + B)</option><option value="subtract">Subtraction (A − B)</option><option value="increment">Increment (A + 1)</option><option value="decrement">Decrement (A − 1)</option></select></label><label>Input A<select id="arithmeticA"></select></label><label id="arithmeticBWrap">Input B<select id="arithmeticB"></select></label><label>Destination register<select id="arithmeticDestination"></select></label></div>
+            <button class="btn primary" id="arithmeticBtn">Execute arithmetic</button><p class="hint">Example: <code>R3 ← R1 + R2</code></p>
+          </section>
+          <section class="operation-panel" id="logicalPanel">
+            <h3>Logical operations</h3><p class="muted">Bitwise operations work on all 8 bits.</p>
+            <div class="form-grid three"><label>Operation<select id="logicalType"><option value="and">AND</option><option value="or">OR</option><option value="xor">XOR</option><option value="not">NOT</option></select></label><label>Input A<select id="logicalA"></select></label><label id="logicalBWrap">Input B<select id="logicalB"></select></label><label>Destination register<select id="logicalDestination"></select></label></div>
+            <button class="btn primary" id="logicalBtn">Execute logical operation</button><p class="hint">Example: <code>R0 ← R1 AND R2</code></p>
+          </section>
+          <div id="message" class="message" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="alu" class="section">
+      <div class="section-heading"><div><p class="eyebrow">ARITHMETIC LOGIC UNIT</p><h2>ALU Simulator</h2><p class="muted">The ALU display updates whenever an arithmetic or logical operation runs.</p></div></div>
+      <div class="alu-card">
+        <div class="alu-input"><small>INPUT A</small><strong id="aluA">00000000</strong><span id="aluADec">0 (decimal)</span></div>
+        <div class="alu-symbol">＋</div><div class="alu-block"><span>ALU</span><small id="aluOperation">WAITING</small></div><div class="alu-symbol">＝</div>
+        <div class="alu-output"><small>RESULT</small><strong id="aluResult">00000000</strong><span id="aluResultDec">0 (decimal)</span></div>
+        <div class="alu-destination"><small>DESTINATION</small><strong id="aluDestination">—</strong></div>
+        <div class="alu-input input-b"><small>INPUT B</small><strong id="aluB">00000000</strong><span id="aluBDec">0 (decimal)</span></div>
+      </div>
+      <p class="muted alu-footnote">All ALU results are limited to 8 bits (0–255).</p>
+    </section>
+
+    <section id="architecture" class="section">
+      <div class="section-heading"><div><p class="eyebrow">SYSTEM OVERVIEW</p><h2>CPU Architecture Diagram</h2><p class="muted">A simplified view of the datapath used by this simulator.</p></div></div>
+      <div class="architecture">
+        <div class="arch-column"><div class="arch-unit control-unit" id="controlUnit"><span class="unit-icon">⚙</span><strong>CONTROL UNIT</strong><small>Coordinates operations</small></div><div class="bus-label">Control signals</div></div>
+        <div class="arch-bus"><span>INTERNAL DATA BUS</span><div class="bus-line"></div><div class="bus-arrows">↕ ↕ ↕</div></div>
+        <div class="arch-column register-units"><div class="arch-registers" id="archRegisters"><div class="arch-register" data-register="R0">R0</div><div class="arch-register" data-register="R1">R1</div><div class="arch-register" data-register="R2">R2</div><div class="arch-register" data-register="R3">R3</div></div><div class="arch-unit alu-unit" id="archALU"><strong>ALU</strong><small>Arithmetic & logic</small></div></div>
+      </div>
+      <p class="diagram-note">Highlighted blocks indicate the registers and processing unit involved in the most recent operation.</p>
+    </section>
+
+    <section id="history" class="section">
+      <div class="section-heading"><div><p class="eyebrow">EXECUTION LOG</p><h2>Operation History</h2><p class="muted">Your latest operations appear first. History is kept for this browser session.</p></div><button class="btn secondary small" id="clearHistoryBtn">Clear history</button></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Operation</th><th>RTL notation</th><th>Result</th><th>Date & time</th></tr></thead><tbody id="historyBody"><tr><td colspan="5" class="empty">No operations yet. Try loading a value into a register.</td></tr></tbody></table></div>
+    </section>
+
+    <section id="help" class="section help-section">
+      <div class="section-heading"><div><p class="eyebrow">LEARN THE BASICS</p><h2>Help & Instructions</h2></div></div>
+      <div class="help-grid">
+        <article class="help-card"><span>01</span><h3>Registers</h3><p>Registers are small, fast storage locations inside the CPU. This simulator has four 8-bit registers, R0 to R3.</p></article>
+        <article class="help-card"><span>02</span><h3>RTL notation</h3><p>Register Transfer Language describes data movement. The arrow <code>←</code> means the value on the right is copied into the register on the left.</p></article>
+        <article class="help-card"><span>03</span><h3>8-bit wraparound</h3><p>Values are stored modulo 256. For example, 255 + 1 becomes 0 (overflow), and 0 − 1 becomes 255 (underflow).</p></article>
+        <article class="help-card"><span>04</span><h3>Logical operations</h3><p>AND sets a bit when both inputs have it; OR when either input has it; XOR when inputs differ; NOT flips every bit.</p></article>
+      </div>
+      <div class="examples"><h3>Try these example operations</h3><p>Load R1 with 15 and R2 with 3, then try:</p><div class="example-row"><code>R3 ← R1 + R2</code><span>18</span></div><div class="example-row"><code>R0 ← R1 AND R2</code><span>3</span></div><div class="example-row"><code>R2 ← NOT R1</code><span>240</span></div><div class="example-row"><code>R1 ← R1 + 1</code><span>16</span></div></div>
+    </section>
+  </main>
+  <footer><strong>CPU Register Transfer Simulator</strong><span>Educational project · 8-bit CPU model · Built with HTML, CSS & JavaScript</span></footer>
+  <script src="js/registers.js"></script><script src="js/operations.js"></script><script src="js/history.js"></script><script src="js/script.js"></script>
+</body>
+</html>
