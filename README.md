@@ -61,12 +61,10 @@ The operation history marks arithmetic wraparound in the RTL entry.
 5. Try `R0 ← R1 AND R2` in the Logical panel.
 
 ## Screenshots
-Add screenshots of the dashboard, register bank, ALU and operation history here after running the website.
 
-```md
-![Dashboard](assets/images/dashboard-screenshot.png)
-![Register bank](assets/images/register-bank-screenshot.png)
-```
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/5517adec-203a-46fb-877c-c08628106062" />
+
+
 
 ## Future scope
 - Add flags such as carry, zero, sign and overflow.
