@@ -16,19 +16,6 @@ A beginner-friendly, browser-based educational simulator that demonstrates how a
 ## Technologies
 HTML5, CSS3 and vanilla JavaScript.
 
-## Run locally
-1. Download and extract the ZIP file.
-2. Open the `CPU-Register-Transfer-Simulator` folder.
-3. Double-click `index.html` to open it in a modern browser.
-4. No installation or server is required. Clipboard copy works in secure contexts (HTTPS or localhost).
-
-## GitHub Pages
-1. Create a GitHub repository.
-2. Upload the contents of this project folder (keep `index.html` at the repository root).
-3. Open **Settings → Pages**.
-4. Under Build and deployment, choose **Deploy from a branch**, select `main` and `/ (root)`, then save.
-5. Open the published Pages URL after deployment finishes.
-
 ## Project structure
 ```text
 CPU-Register-Transfer-Simulator/
@@ -64,14 +51,6 @@ The operation history marks arithmetic wraparound in the RTL entry.
 
 <img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/5517adec-203a-46fb-877c-c08628106062" />
 
-
-
-## Future scope
-- Add flags such as carry, zero, sign and overflow.
-- Add a step-by-step datapath animation.
-- Support configurable register width.
-- Add memory and instruction-fetch simulation.
-- Add export/import of operation history.
 
 ## Educational note
 This project is a simplified model for learning register transfer and microoperations. It is not a cycle-accurate processor emulator.
